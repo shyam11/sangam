@@ -1,52 +1,82 @@
-name: Continuous Integration
+# name: Continuous Integration
+# on:
+#   push:
+#     branches:
+#       - main
+#     # Ignore changes in folders that are affected by the auto commit. (Node.js project)
+#     paths-ignore: 
+#       - 'coverage/**'
+#       - 'devdist/**'
+#       - 'dist/**'
+#       - 'docs/**'
+#       - "**.md"      
+#   pull_request:
+#     branches:
+#       - main
+#     paths-ignore:
+#       - "**.md"      
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         node-version: [12.x]    
+#     env: 
+#       CI_COMMIT_MESSAGE: Continuous Integration Build Artifacts
+#       CI_COMMIT_AUTHOR: Continuous Integration
+
+#     steps:
+#     - uses: actions/checkout@v3
+#       with:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+#     # Build steps
+#     - uses: actions/setup-node@v3
+#       with:
+#         node-version: '12' 
+#     - name: Node Install
+#       run: npm ci
+#     - name: Node Build (lint, test, coverage, doc, build, package)
+#       run: npm install
+
+#     # Commit and push all changed files. 
+#     # Must only affect files that are listed in "paths-ignore".
+#     - name: GIT Commit Build Artifacts (coverage, dist, devdist, docs)
+#       # Only run on main branch push (e.g. pull request merge).
+#       if: github.event_name == 'push'
+#       run: |
+#         git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
+#         git config --global user.email "username@users.noreply.github.com"
+#         git add coverage devdist dist docs
+#         git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
+#         git push
+
+
+
+
+name: Laravel
+
 on:
   push:
-    branches:
-      - main
-    # Ignore changes in folders that are affected by the auto commit. (Node.js project)
-    paths-ignore: 
-      - 'coverage/**'
-      - 'devdist/**'
-      - 'dist/**'
-      - 'docs/**'
-      - "**.md"      
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - "**.md"      
+    branches: [ "main" ]
+
 jobs:
-  build:
+  laravel-tests:
+
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]    
-    env: 
-      CI_COMMIT_MESSAGE: Continuous Integration Build Artifacts
-      CI_COMMIT_AUTHOR: Continuous Integration
 
     steps:
+    - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
+      with:
+        php-version: '8.0'
     - uses: actions/checkout@v3
-      with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    # Build steps
-    - uses: actions/setup-node@v3
-      with:
-        node-version: '12' 
-    - name: Node Install
-      run: npm ci
-    - name: Node Build (lint, test, coverage, doc, build, package)
-      run: npm install
-
-    # Commit and push all changed files. 
-    # Must only affect files that are listed in "paths-ignore".
-    - name: GIT Commit Build Artifacts (coverage, dist, devdist, docs)
-      # Only run on main branch push (e.g. pull request merge).
-      if: github.event_name == 'push'
-      run: |
-        git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
-        git config --global user.email "username@users.noreply.github.com"
-        git add coverage devdist dist docs
-        git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
-        git push
+    - name: Copy .env
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+    - name: Install Dependencies
+      run: ccomposer install --ignore-platform-reqs -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - name: Generate key
+      run: php artisan key:generate
+    - name: Directory Permissions
+      run: chmod -R 777 storage bootstrap/cache
