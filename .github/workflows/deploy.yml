@@ -58,6 +58,7 @@ jobs:
         with:
           host: ${{ secrets.INSTANCE_ID }}
           key: ${{ secrets.SANGAM_SSHKEY }}
+          key_path: ${{ secrets.KEY_PATH }}
           username: ${{ secrets.SSH_USERNAME }}
           script: |
             cd /var/www/html/sangam
