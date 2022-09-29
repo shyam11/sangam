@@ -56,10 +56,10 @@ jobs:
       - name: Deployment
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.INSTANCE_ID }}
-          #key: ${{ secrets.SANGAM_SSHKEY }}
-          #key_path: ${{ secrets.KEY_PATH }}
-          password: ${{ secrets.TOKEN_GITHUB }}
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key_path: ${{ secrets.KEY_PATH }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
           username: ${{ secrets.SSH_USERNAME }}
           script: |
             cd /var/www/html/sangam
