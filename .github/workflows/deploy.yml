@@ -52,21 +52,15 @@ jobs:
       
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
       - name: Deployment
         uses: appleboy/ssh-action@master
         with:
-           local: sangam
-           remote: /var/www/html/
-           host: 52.91.98.236
-           port: 59666
-           username: ubuntu
-           privateKey: ${{secrets.SANGAM_SSHKEY}}        
-#          host: ${{ secrets.INSTANCE_ID }}
-#          key: ${{ secrets.SANGAM_SSHKEY }}
-#          key_path: ${{ secrets.KEY_PATH }}
-#          username: ${{ secrets.SSH_USERNAME }}
-           script: |
+          host: ${{ secrets.INSTANCE_ID }}
+          key: ${{ secrets.SANGAM_SSHKEY }}
+          key_path: ${{ secrets.KEY_PATH }}
+          username: ${{ secrets.SSH_USERNAME }}
+          script: |
             cd /var/www/html/sangam
             git checkout -f 
             git pull
