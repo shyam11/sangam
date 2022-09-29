@@ -36,8 +36,10 @@ jobs:
         node-version: '12' 
     - name: Node Install
       run: npm ci
-    -name: Node Build (lint, test, coverage, doc, build, package)
-      run: npm run package
+    - name: Node Build (lint, test, coverage, doc, build, package)
+      run: |
+          npm run build --if-present
+          npm run test --if-present
 
     # Commit and push all changed files. 
     # Must only affect files that are listed in "paths-ignore".
