@@ -1,8 +1,9 @@
 name: Continious Integration
 
 on:
-#   push:
-#     branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+    
   pull_request:
     branches: [ "main" ]
 
